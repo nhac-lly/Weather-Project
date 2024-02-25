@@ -1,5 +1,6 @@
 # Note
 To install: npm i
+
 To run: npm run dev
 
 No additional dependency require other than React + Vite
