@@ -72,11 +72,9 @@ function App() {
         <div>
           <h2 style={{ textAlign: 'left' }}>Search History</h2>
           <hr />
-          {
-            searchList?.length > 0 && searchList.map((item, index) => {
-              return <WeatherResultItem item={item} index={index} {...componentOptions} />
-            })
-          }
+          {searchList?.length > 0 && searchList.map((item, index) =>
+            <WeatherResultItem item={item} index={index} {...componentOptions} />)}
+          {searchList?.length === 0 && <p style={{ textAlign: 'center' }}>No record</p>}
         </div>
       </div>
     </>
