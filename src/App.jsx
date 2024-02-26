@@ -30,8 +30,9 @@ function App() {
         appid: 'f717c4a03ccdb7b5482538125e0868fe'
       })}`)
       const json = await res.json()
-      setSearchList(prev => [...prev, { ...json, curTime: Date.now() }])
       setData(json)
+      if (json.cod === '404') return
+      setSearchList(prev => [...prev, { ...json, curTime: Date.now() }])
     }
     catch (e) { console.log(e) }
   }
@@ -77,12 +78,12 @@ function App() {
             searchList?.length > 0 && searchList.map((item, index) => {
               return <div key={index} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid grey', fontWeight: '500' }}>
                 <span style={{ margin: 'auto 0' }}>{index + 1}. {item.name + ', ' + item.sys.country}</span>
-                <div style={{display: 'flex'}}>
+                <div style={{ display: 'flex' }}>
                   <span style={{ padding: '0 5px' }}>{new Date(item.curTime).toLocaleTimeString('en-US')}</span>
-                  <button style={{ height: '26px', padding: '1px'}} type='button' onClick={() => setData(item)}><SearchSvg/></button>
-                  <button style={{ height: '26px', padding: '1px'}} type='button' onClick={() => {
+                  <button style={{ height: '26px', padding: '1px' }} type='button' onClick={() => setData(item)}><SearchSvg /></button>
+                  <button style={{ height: '26px', padding: '1px' }} type='button' onClick={() => {
                     setSearchList(prev => prev.filter((_, i) => i !== index))
-                  }}><DeleteSvg style={{margin: 'auto'}}/></button>
+                  }}><DeleteSvg style={{ margin: 'auto' }} /></button>
                 </div>
               </div>
             })
