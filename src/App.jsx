@@ -1,6 +1,9 @@
 import { useRef, useState } from 'react'
 import './App.css'
-import { DeleteSvg, SearchSvg } from './svg'
+import WeatherResultItem from './components/WeatherResultItem'
+import WeatherCard from './components/WeatherCard'
+import WeatherSearch from './components/WeatherSearch'
+import WeatherError from './components/WeatherError'
 
 function App() {
   const cityRef = useRef()
@@ -43,6 +46,17 @@ function App() {
     setData(null)
   }
 
+  const componentOptions = {
+    cityRef,
+    countryRef,
+    fetchData,
+    clearData,
+    data,
+    setData,
+    searchList,
+    setSearchList,
+  }
+
   return (
     <>
       <div>
@@ -50,42 +64,17 @@ function App() {
         <hr />
       </div>
       <div>
-        <div style={{ display: 'flex', gap: '0px 20px' }}>
-          <label style={{ margin: 'auto', whiteSpace: 'nowrap' }}><span>City: </span><input type='text' ref={cityRef} /></label>
-          <label style={{ margin: 'auto', whiteSpace: 'nowrap' }}><span>Country: </span><input type='text' ref={countryRef} /></label>
-          <div style={{ display: 'flex', gap: '0px 10px' }}>
-            <div><button type='button' onClick={fetchData}><span>Search</span></button></div>
-            <div><button type='button' onClick={clearData}><span>Clear</span></button></div>
-          </div>
-        </div>
-        {data?.cod && data.cod === '404' && <div style={{ width: '100%', border: '1px solid red', padding: '10px' }}><span style={{ textAlign: 'left', color: 'red', fontWeight: 'bold' }}>{data.message}</span></div>}
+        <WeatherSearch {...componentOptions} />
+        {data?.cod && data.cod === '404' && <WeatherError {...componentOptions} />}
         <div style={{ display: 'grid', gridAutoColumns: '300px', padding: '20px 0', whiteSpace: 'nowrap' }}>
-          {data?.cod !== '404' && data && <div style={{ textAlign: 'left' }}>
-            <span style={{ fontWeight: 'lighter' }}>{data.name + ', ' + data.sys.country}</span>
-            <h1 style={{ margin: '1px' }}>{data.weather[0].main}</h1>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-              <span style={{ fontWeight: 'lighter' }}>Description: </span><span style={{ fontWeight: 'bold' }}>{data.weather[0].description}</span>
-              <span style={{ fontWeight: 'lighter' }}>Temperature: </span><span style={{ fontWeight: 'bold' }}>{data.main.temp}</span>
-              <span style={{ fontWeight: 'lighter' }}>Humidity: </span><span style={{ fontWeight: 'bold' }}>{data.main.humidity}</span>
-              <span style={{ fontWeight: 'lighter' }}>Time: </span><span style={{ fontWeight: 'bold' }}>{new Date(+data?.dt * 1000).toLocaleDateString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
-            </div>
-          </div>}
+          {data?.cod !== '404' && data && <WeatherCard {...componentOptions} />}
         </div>
         <div>
           <h2 style={{ textAlign: 'left' }}>Search History</h2>
           <hr />
           {
             searchList?.length > 0 && searchList.map((item, index) => {
-              return <div key={index} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid grey', fontWeight: '500' }}>
-                <span style={{ margin: 'auto 0' }}>{index + 1}. {item.name + ', ' + item.sys.country}</span>
-                <div style={{ display: 'flex', gap: '2px' }}>
-                  <span style={{ padding: '0 5px' }}>{new Date(item.curTime).toLocaleTimeString('en-US')}</span>
-                  <button style={{ height: '26px', padding: '1px'}} className='svg-icon' type='button' onClick={() => setData(item)}><SearchSvg /></button>
-                  <button style={{ height: '26px', padding: '1px'}} className='svg-icon' type='button' onClick={() => {
-                    setSearchList(prev => prev.filter((_, i) => i !== index))
-                  }}><DeleteSvg style={{ margin: 'auto' }} /></button>
-                </div>
-              </div>
+              return <WeatherResultItem item={item} index={index} {...componentOptions} />
             })
           }
         </div>
